@@ -4,7 +4,6 @@ const verbs = [
   { base: "begin", past: "began", participle: "begun", translation: "починати" },
   { base: "break", past: "broke", participle: "broken", translation: "ламати" },
   { base: "bring", past: "brought", participle: "brought", translation: "приносити" },
-  // Додай ще за бажанням
 ];
 
 const tableBody = document.getElementById("verbsTableBody");
@@ -32,6 +31,26 @@ searchInput.addEventListener("input", () => {
     verb.translation.includes(value)
   );
   renderVerbs(filtered);
+});
+
+// Додавання нового дієслова
+document.getElementById("addVerbForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+
+  const base = document.getElementById("baseInput").value.trim();
+  const past = document.getElementById("pastInput").value.trim();
+  const participle = document.getElementById("participleInput").value.trim();
+  const translation = document.getElementById("translationInput").value.trim();
+
+  if (!base || !past || !participle || !translation) {
+    alert("Будь ласка, заповніть всі поля.");
+    return;
+  }
+
+  verbs.push({ base, past, participle, translation });
+  renderVerbs(verbs);
+
+  this.reset();
 });
 
 renderVerbs(verbs);
