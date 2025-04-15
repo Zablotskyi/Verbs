@@ -86,7 +86,6 @@ const quizVerbs = JSON.parse(localStorage.getItem("irregularVerbs")) || [
 
 let currentVerb = null;
 
-// Функція, що оновлює поточне запитання
 function pickRandomVerb() {
   if (quizVerbs.length === 0) return;
   currentVerb = quizVerbs[Math.floor(Math.random() * quizVerbs.length)];
@@ -104,27 +103,37 @@ function checkAnswer() {
   const inputParticiple = document.getElementById("inputParticiple").value.trim();
   const inputTranslation = document.getElementById("inputTranslation").value.trim();
 
+  // Якщо поле "Переклад" порожнє, вважаємо його за правильне
+  const translationIsCorrect = (inputTranslation === "") ||
+    (inputTranslation.toLowerCase() === currentVerb.translation.toLowerCase());
+
   const isCorrect =
     inputPast.toLowerCase() === currentVerb.past.toLowerCase() &&
     inputParticiple.toLowerCase() === currentVerb.participle.toLowerCase() &&
-    inputTranslation.toLowerCase() === currentVerb.translation.toLowerCase();
+    translationIsCorrect;
 
   const indicator = isCorrect ? "✅" : "❌";
 
-  // Формуємо вміст кожного стовпця: якщо відповідь неправильна, додаємо правильну відповідь у червоному кольорі.
+  // Формуємо вміст для Past Simple
   const pastCellContent = (inputPast.toLowerCase() === currentVerb.past.toLowerCase())
     ? inputPast
-    : `${inputPast} <span style="color: red;">( : ${currentVerb.past})</span>`;
+    : `${inputPast} <span style="color: red;">(Правильна відповідь: ${currentVerb.past})</span>`;
 
+  // Формуємо вміст для Past Participle
   const participleCellContent = (inputParticiple.toLowerCase() === currentVerb.participle.toLowerCase())
     ? inputParticiple
-    : `${inputParticiple} <span style="color: red;">( : ${currentVerb.participle})</span>`;
+    : `${inputParticiple} <span style="color: red;">(Правильна відповідь: ${currentVerb.participle})</span>`;
 
-  const translationCellContent = (inputTranslation.toLowerCase() === currentVerb.translation.toLowerCase())
-    ? inputTranslation
-    : `${inputTranslation} <span style="color: red;">( : ${currentVerb.translation})</span>`;
+  // Формуємо вміст для Перекладу:
+  // Якщо поле порожнє — показуємо правильну відповідь зеленим шрифтом,
+  // інакше — перевіряємо правильність введеного значення
+  const translationCellContent = (inputTranslation === "")
+    ? `<span style="color: green;">${currentVerb.translation}</span>`
+    : (inputTranslation.toLowerCase() === currentVerb.translation.toLowerCase())
+      ? inputTranslation
+      : `${inputTranslation} <span style="color: red;">(Правильна відповідь: ${currentVerb.translation})</span>`;
 
-  // Створюємо новий рядок з результатами
+  // Створюємо новий рядок з результатами, що включає Infinitive
   const newRow = document.createElement("tr");
   newRow.innerHTML = `
     <td>${indicator}</td>
@@ -138,7 +147,7 @@ function checkAnswer() {
   // Видаляємо поточний рядок вводу
   const inputRow = document.getElementById("inputRow");
   resultsBody.removeChild(inputRow);
-  // Додаємо рядок з результатами зверху
+  // Додаємо новостворений рядок результату на початок таблиці
   resultsBody.insertBefore(newRow, resultsBody.firstChild);
 
   // Створюємо новий рядок для введення відповіді
@@ -149,7 +158,7 @@ function checkAnswer() {
     <td id="inputInfinitive"></td>
     <td><input type="text" id="inputPast" placeholder="Past Simple" /></td>
     <td><input type="text" id="inputParticiple" placeholder="Past Participle" /></td>
-    <td><input type="text" id="inputTranslation" placeholder="Переклад" /></td>
+    <td><input type="text" id="inputTranslation" placeholder="Переклад (не обов'язково)" /></td>
   `;
   resultsBody.insertBefore(newInputRow, resultsBody.firstChild);
 
@@ -157,7 +166,7 @@ function checkAnswer() {
   pickRandomVerb();
 }
 
-// Додаємо обробку події для натискання клавіші Enter (опційно)
+// Обробка події для натискання клавіші Enter (опційно)
 document.getElementById("resultsTable").addEventListener("keydown", function(event) {
   if (event.key === "Enter" && event.target.closest("#inputRow")) {
     event.preventDefault();
