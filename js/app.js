@@ -1,13 +1,16 @@
-const verbs = [
+const LOCAL_STORAGE_KEY = "irregularVerbs";
+let verbs = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || [
   { base: "be", past: "was/were", participle: "been", translation: "бути" },
-  { base: "become", past: "became", participle: "become", translation: "ставати" },
   { base: "begin", past: "began", participle: "begun", translation: "починати" },
   { base: "break", past: "broke", participle: "broken", translation: "ламати" },
-  { base: "bring", past: "brought", participle: "brought", translation: "приносити" },
 ];
 
 const tableBody = document.getElementById("verbsTableBody");
 const searchInput = document.getElementById("searchInput");
+
+function saveVerbs() {
+  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(verbs));
+}
 
 function renderVerbs(filteredVerbs) {
   tableBody.innerHTML = "";
@@ -33,7 +36,6 @@ searchInput.addEventListener("input", () => {
   renderVerbs(filtered);
 });
 
-// Додавання нового дієслова
 document.getElementById("addVerbForm").addEventListener("submit", function (e) {
   e.preventDefault();
 
@@ -48,8 +50,8 @@ document.getElementById("addVerbForm").addEventListener("submit", function (e) {
   }
 
   verbs.push({ base, past, participle, translation });
+  saveVerbs();
   renderVerbs(verbs);
-
   this.reset();
 });
 
