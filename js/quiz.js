@@ -7,19 +7,18 @@ const quizVerbs = JSON.parse(localStorage.getItem("irregularVerbs")) || [
 
 let currentVerb = null;
 
+// Функція, що оновлює поточне запитання
 function pickRandomVerb() {
   if (quizVerbs.length === 0) return;
   currentVerb = quizVerbs[Math.floor(Math.random() * quizVerbs.length)];
-  // Оновлення тексту питання
   document.getElementById("question").textContent = `Введіть форми для дієслова: ${currentVerb.base}`;
-  // Оновлення клітинки Infinitive у рядку вводу
   document.getElementById("inputInfinitive").textContent = currentVerb.base;
-  // Очищення полів вводу
   document.getElementById("inputPast").value = "";
   document.getElementById("inputParticiple").value = "";
   document.getElementById("inputTranslation").value = "";
 }
 
+// Функція перевірки відповіді
 function checkAnswer() {
   const inputPast = document.getElementById("inputPast").value.trim();
   const inputParticiple = document.getElementById("inputParticiple").value.trim();
@@ -32,7 +31,7 @@ function checkAnswer() {
 
   const indicator = isCorrect ? "✅" : "❌";
 
-  // Створюємо новий рядок з результатами
+  // Створення нового рядка з результатами, що містить також Infinitive
   const newRow = document.createElement("tr");
   newRow.innerHTML = `
     <td>${indicator}</td>
@@ -43,13 +42,11 @@ function checkAnswer() {
   `;
 
   const resultsBody = document.getElementById("resultsBody");
-  // Видаляємо поточний рядок вводу
   const inputRow = document.getElementById("inputRow");
   resultsBody.removeChild(inputRow);
-  // Додаємо результатний рядок зверху
   resultsBody.insertBefore(newRow, resultsBody.firstChild);
 
-  // Створюємо новий рядок вводу
+  // Створення нового рядка для введення відповіді
   const newInputRow = document.createElement("tr");
   newInputRow.id = "inputRow";
   newInputRow.innerHTML = `
@@ -61,9 +58,20 @@ function checkAnswer() {
   `;
   resultsBody.insertBefore(newInputRow, resultsBody.firstChild);
 
-  // Завантажуємо нове питання
+  // Завантаження нового запитання
   pickRandomVerb();
 }
+
+// Додаємо обробку події для клавіші Enter
+document.getElementById("resultsTable").addEventListener("keydown", function(event) {
+  if (event.key === "Enter") {
+    // Якщо подія відбулася у рядку введення (inputRow), перехоплюємо Enter
+    if (event.target.closest("#inputRow")) {
+      event.preventDefault(); // Зупиняємо стандартну поведінку (перехід фокусу)
+      checkAnswer();
+    }
+  }
+});
 
 if (quizVerbs.length === 0) {
   document.getElementById("quizContainer").innerHTML = `
