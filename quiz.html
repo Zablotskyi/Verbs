@@ -7,15 +7,30 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Тест на неправильні дієслова</h1>
-  <div id="quizContainer">
-    <p id="question"></p>
-    <input type="text" id="inputPast" placeholder="Past Simple" />
-    <input type="text" id="inputParticiple" placeholder="Past Participle" />
-    <input type="text" id="inputTranslation" placeholder="Переклад" />
-    <button onclick="checkAnswer()">Перевірити</button>
-    <p id="result"></p>
-  </div>
-  <script src="quiz.js"></script>
+<h1>Тест на неправильні дієслова</h1>
+<!-- Поточне запитання з Infinitive -->
+<p id="question"></p>
+<!-- Таблиця з результатами тесту -->
+<table id="resultsTable">
+  <thead>
+  <tr>
+    <th>Результат</th>
+    <th>Past Simple</th>
+    <th>Past Participle</th>
+    <th>Переклад</th>
+  </tr>
+  </thead>
+  <tbody id="resultsBody">
+  <!-- Рядок для введення відповіді -->
+  <tr id="inputRow">
+    <td></td>
+    <td><input type="text" id="inputPast" placeholder="Past Simple" /></td>
+    <td><input type="text" id="inputParticiple" placeholder="Past Participle" /></td>
+    <td><input type="text" id="inputTranslation" placeholder="Переклад" /></td>
+  </tr>
+  </tbody>
+</table>
+<button onclick="checkAnswer()">Перевірити</button>
+<script src="js/quiz.js"></script>
 </body>
 </html>

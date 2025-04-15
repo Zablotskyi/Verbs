@@ -7,33 +7,34 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<h1>Неправильні дієслова</h1>
+  <h1>Неправильні дієслова</h1>
 
-<input type="text" id="searchInput" placeholder="Пошук дієслова..." />
+  <input type="text" id="searchInput" placeholder="Пошук дієслова..." />
 
-<table>
-  <thead>
-  <tr>
-    <th>Infinitive</th>
-    <th>Past Simple</th>
-    <th>Past Participle</th>
-    <th>Переклад</th>
-  </tr>
-  </thead>
-  <tbody id="verbsTableBody"></tbody>
-</table>
+  <table>
+    <thead>
+      <tr>
+        <th>Infinitive</th>
+        <th>Past Simple</th>
+        <th>Past Participle</th>
+        <th>Переклад</th>
+      </tr>
+    </thead>
+    <tbody id="verbsTableBody"></tbody>
+  </table>
 
-<h2>Додати нове дієслово</h2>
-<form id="addVerbForm">
-  <input type="text" id="baseInput" placeholder="Infinitive" required />
-  <input type="text" id="pastInput" placeholder="Past Simple" required />
-  <input type="text" id="participleInput" placeholder="Past Participle" required />
-  <input type="text" id="translationInput" placeholder="Переклад" required />
-  <button type="submit">Додати</button>
-</form>
+  <h2>Додати нове дієслово</h2>
+  <form id="addVerbForm">
+    <input type="text" id="baseInput" placeholder="Infinitive" required />
+    <input type="text" id="pastInput" placeholder="Past Simple" required />
+    <input type="text" id="participleInput" placeholder="Past Participle" required />
+    <input type="text" id="translationInput" placeholder="Переклад" required />
+    <button type="submit">Додати</button>
+  </form>
 
-<a href="quiz.html">👉 Перейти до тесту</a>
+  <button onclick="downloadVerbs()">⬇️ Завантажити словник (.json)</button>
+  <a href="quiz.html">👉 Перейти до тесту</a>
 
-<script src="script.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
