@@ -96,6 +96,8 @@ function pickRandomVerb() {
   document.getElementById("inputPast").value = "";
   document.getElementById("inputParticiple").value = "";
   document.getElementById("inputTranslation").value = "";
+  // Встановлюємо фокус у полі "Past Simple"
+  document.getElementById("inputPast").focus();
 }
 
 function checkAnswer() {
@@ -103,7 +105,7 @@ function checkAnswer() {
   const inputParticiple = document.getElementById("inputParticiple").value.trim();
   const inputTranslation = document.getElementById("inputTranslation").value.trim();
 
-  // Якщо поле "Переклад" порожнє, вважаємо його за правильне
+  // Якщо поле "Переклад" порожнє, вважаємо його правильною відповіддю
   const translationIsCorrect = (inputTranslation === "") ||
     (inputTranslation.toLowerCase() === currentVerb.translation.toLowerCase());
 
@@ -126,7 +128,7 @@ function checkAnswer() {
 
   // Формуємо вміст для Перекладу:
   // Якщо поле порожнє — показуємо правильну відповідь зеленим шрифтом,
-  // інакше — перевіряємо правильність введеного значення
+  // інакше перевіряємо правильність введеного значення
   const translationCellContent = (inputTranslation === "")
     ? `<span style="color: green;">${currentVerb.translation}</span>`
     : (inputTranslation.toLowerCase() === currentVerb.translation.toLowerCase())
@@ -162,11 +164,10 @@ function checkAnswer() {
   `;
   resultsBody.insertBefore(newInputRow, resultsBody.firstChild);
 
-  // Завантажуємо наступне запитання
+  // Завантажуємо наступне запитання і встановлюємо фокус знову
   pickRandomVerb();
 }
 
-// Обробка події для натискання клавіші Enter (опційно)
 document.getElementById("resultsTable").addEventListener("keydown", function(event) {
   if (event.key === "Enter" && event.target.closest("#inputRow")) {
     event.preventDefault();
