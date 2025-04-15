@@ -12,13 +12,14 @@ function pickRandomVerb() {
   if (quizVerbs.length === 0) return;
   currentVerb = quizVerbs[Math.floor(Math.random() * quizVerbs.length)];
   document.getElementById("question").textContent = `Введіть форми для дієслова: ${currentVerb.base}`;
+  // Оновлюємо клітинку Infinitive в рядку вводу
   document.getElementById("inputInfinitive").textContent = currentVerb.base;
+  // Очищуємо поля вводу
   document.getElementById("inputPast").value = "";
   document.getElementById("inputParticiple").value = "";
   document.getElementById("inputTranslation").value = "";
 }
 
-// Функція перевірки відповіді
 function checkAnswer() {
   const inputPast = document.getElementById("inputPast").value.trim();
   const inputParticiple = document.getElementById("inputParticiple").value.trim();
@@ -31,22 +32,37 @@ function checkAnswer() {
 
   const indicator = isCorrect ? "✅" : "❌";
 
-  // Створення нового рядка з результатами, що містить також Infinitive
+  // Формуємо вміст кожного стовпця: якщо відповідь неправильна, додаємо правильну відповідь у червоному кольорі.
+  const pastCellContent = (inputPast.toLowerCase() === currentVerb.past.toLowerCase())
+    ? inputPast
+    : `${inputPast} <span style="color: red;">( : ${currentVerb.past})</span>`;
+
+  const participleCellContent = (inputParticiple.toLowerCase() === currentVerb.participle.toLowerCase())
+    ? inputParticiple
+    : `${inputParticiple} <span style="color: red;">( : ${currentVerb.participle})</span>`;
+
+  const translationCellContent = (inputTranslation.toLowerCase() === currentVerb.translation.toLowerCase())
+    ? inputTranslation
+    : `${inputTranslation} <span style="color: red;">( : ${currentVerb.translation})</span>`;
+
+  // Створюємо новий рядок з результатами
   const newRow = document.createElement("tr");
   newRow.innerHTML = `
     <td>${indicator}</td>
     <td>${currentVerb.base}</td>
-    <td>${inputPast}</td>
-    <td>${inputParticiple}</td>
-    <td>${inputTranslation}</td>
+    <td>${pastCellContent}</td>
+    <td>${participleCellContent}</td>
+    <td>${translationCellContent}</td>
   `;
 
   const resultsBody = document.getElementById("resultsBody");
+  // Видаляємо поточний рядок вводу
   const inputRow = document.getElementById("inputRow");
   resultsBody.removeChild(inputRow);
+  // Додаємо рядок з результатами зверху
   resultsBody.insertBefore(newRow, resultsBody.firstChild);
 
-  // Створення нового рядка для введення відповіді
+  // Створюємо новий рядок для введення відповіді
   const newInputRow = document.createElement("tr");
   newInputRow.id = "inputRow";
   newInputRow.innerHTML = `
@@ -58,18 +74,15 @@ function checkAnswer() {
   `;
   resultsBody.insertBefore(newInputRow, resultsBody.firstChild);
 
-  // Завантаження нового запитання
+  // Завантажуємо наступне запитання
   pickRandomVerb();
 }
 
-// Додаємо обробку події для клавіші Enter
+// Додаємо обробку події для натискання клавіші Enter (опційно)
 document.getElementById("resultsTable").addEventListener("keydown", function(event) {
-  if (event.key === "Enter") {
-    // Якщо подія відбулася у рядку введення (inputRow), перехоплюємо Enter
-    if (event.target.closest("#inputRow")) {
-      event.preventDefault(); // Зупиняємо стандартну поведінку (перехід фокусу)
-      checkAnswer();
-    }
+  if (event.key === "Enter" && event.target.closest("#inputRow")) {
+    event.preventDefault();
+    checkAnswer();
   }
 });
 
