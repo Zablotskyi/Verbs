@@ -1,4 +1,4 @@
-// Встановлюємо quizVerbs з fallback-значеннями, якщо localStorage порожній
+// Якщо localStorage порожній, використовуємо дефолтний набір дієслів
 const quizVerbs = JSON.parse(localStorage.getItem("irregularVerbs")) || [
   { base: "be", past: "was/were", participle: "been", translation: "бути" },
   { base: "begin", past: "began", participle: "begun", translation: "починати" },
@@ -7,20 +7,24 @@ const quizVerbs = JSON.parse(localStorage.getItem("irregularVerbs")) || [
 
 let currentVerb = null;
 
-// Функція, що оновлює питання (Infinitive)
 function pickRandomVerb() {
   if (quizVerbs.length === 0) return;
   currentVerb = quizVerbs[Math.floor(Math.random() * quizVerbs.length)];
+  // Оновлення тексту питання
   document.getElementById("question").textContent = `Введіть форми для дієслова: ${currentVerb.base}`;
+  // Оновлення клітинки Infinitive у рядку вводу
+  document.getElementById("inputInfinitive").textContent = currentVerb.base;
+  // Очищення полів вводу
+  document.getElementById("inputPast").value = "";
+  document.getElementById("inputParticiple").value = "";
+  document.getElementById("inputTranslation").value = "";
 }
 
-// Функція перевірки відповіді та обробки результату
 function checkAnswer() {
   const inputPast = document.getElementById("inputPast").value.trim();
   const inputParticiple = document.getElementById("inputParticiple").value.trim();
   const inputTranslation = document.getElementById("inputTranslation").value.trim();
 
-  // Перевірка відповідей
   const isCorrect =
     inputPast.toLowerCase() === currentVerb.past.toLowerCase() &&
     inputParticiple.toLowerCase() === currentVerb.participle.toLowerCase() &&
@@ -28,35 +32,36 @@ function checkAnswer() {
 
   const indicator = isCorrect ? "✅" : "❌";
 
-  // Створення нового рядка з результатами
+  // Створюємо новий рядок з результатами
   const newRow = document.createElement("tr");
   newRow.innerHTML = `
     <td>${indicator}</td>
+    <td>${currentVerb.base}</td>
     <td>${inputPast}</td>
     <td>${inputParticiple}</td>
     <td>${inputTranslation}</td>
   `;
 
-  // Отримуємо tbody для результатів
   const resultsBody = document.getElementById("resultsBody");
   // Видаляємо поточний рядок вводу
   const inputRow = document.getElementById("inputRow");
   resultsBody.removeChild(inputRow);
-  // Додаємо результатний рядок у верхню частину таблиці
+  // Додаємо результатний рядок зверху
   resultsBody.insertBefore(newRow, resultsBody.firstChild);
 
-  // Створюємо новий порожній рядок вводу та вставляємо його на початок
+  // Створюємо новий рядок вводу
   const newInputRow = document.createElement("tr");
   newInputRow.id = "inputRow";
   newInputRow.innerHTML = `
     <td></td>
+    <td id="inputInfinitive"></td>
     <td><input type="text" id="inputPast" placeholder="Past Simple" /></td>
     <td><input type="text" id="inputParticiple" placeholder="Past Participle" /></td>
     <td><input type="text" id="inputTranslation" placeholder="Переклад" /></td>
   `;
   resultsBody.insertBefore(newInputRow, resultsBody.firstChild);
 
-  // Оновлюємо питання для наступного дієслова
+  // Завантажуємо нове питання
   pickRandomVerb();
 }
 
