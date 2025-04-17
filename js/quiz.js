@@ -190,6 +190,20 @@ function renderDictionaryTable() {
   });
 }
 
+// Кнопка для приховування/показу таблиці
+function setupToggleDictionary() {
+  const btn = document.getElementById("toggleDictionaryBtn");
+  const table = document.getElementById("dictionaryTable");
+
+  btn.addEventListener("click", () => {
+    const isVisible = table.style.display !== "none";
+    table.style.display = isVisible ? "none" : "table";
+    btn.textContent = isVisible ? "Показати" : "Сховати";
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   renderDictionaryTable();
+  setupToggleDictionary();
 });
+
