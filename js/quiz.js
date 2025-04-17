@@ -1,5 +1,5 @@
-// Якщо localStorage порожній, використовуємо дефолтний набір дієслів
-const quizVerbs = JSON.parse(localStorage.getItem("irregularVerbs")) || [
+// Дефолтний набір дієслів
+const defaultVerbs = [
   { base: "awake", past: "awoke", participle: "awoke", translation: "прокидатися" },
   { base: "be", past: "was/were", participle: "been", translation: "бути" },
   { base: "beat", past: "beat", participle: "beaten", translation: "бити" },
@@ -82,104 +82,114 @@ const quizVerbs = JSON.parse(localStorage.getItem("irregularVerbs")) || [
   { base: "wake", past: "woke", participle: "woken", translation: "будити" },
   { base: "win", past: "won", participle: "won", translation: "перемагати" },
   { base: "write", past: "wrote", participle: "written", translation: "писати" }
+  // (додайте решту за потреби)
 ];
+
+// Підвантажуємо з localStorage або безпосередньо дефолт
+const quizVerbs = JSON.parse(localStorage.getItem("irregularVerbs")) || defaultVerbs;
 
 let currentVerb = null;
 
+// Показати випадкове дієслово
 function pickRandomVerb() {
-  if (quizVerbs.length === 0) return;
+  if (!quizVerbs.length) return;
   currentVerb = quizVerbs[Math.floor(Math.random() * quizVerbs.length)];
   document.getElementById("question").textContent = `Введіть форми для дієслова: ${currentVerb.base}`;
-  // Оновлюємо клітинку Infinitive в рядку вводу
   document.getElementById("inputInfinitive").textContent = currentVerb.base;
-  // Очищуємо поля вводу
   document.getElementById("inputPast").value = "";
   document.getElementById("inputParticiple").value = "";
   document.getElementById("inputTranslation").value = "";
-  // Встановлюємо фокус у полі "Past Simple"
   document.getElementById("inputPast").focus();
 }
 
+// Перевірка відповіді
 function checkAnswer() {
-  const inputPast = document.getElementById("inputPast").value.trim();
-  const inputParticiple = document.getElementById("inputParticiple").value.trim();
-  const inputTranslation = document.getElementById("inputTranslation").value.trim();
+  const pastInput = document.getElementById("inputPast").value.trim();
+  const partInput = document.getElementById("inputParticiple").value.trim();
+  const transInput = document.getElementById("inputTranslation").value.trim();
 
-  // Якщо поле "Переклад" порожнє, вважаємо його правильною відповіддю
-  const translationIsCorrect = (inputTranslation === "") ||
-    (inputTranslation.toLowerCase() === currentVerb.translation.toLowerCase());
+  const okPast = pastInput.toLowerCase() === currentVerb.past.toLowerCase();
+  const okPart = partInput.toLowerCase() === currentVerb.participle.toLowerCase();
+  const okTrans = transInput === ""
+    ? true
+    : transInput.toLowerCase() === currentVerb.translation.toLowerCase();
 
-  const isCorrect =
-    inputPast.toLowerCase() === currentVerb.past.toLowerCase() &&
-    inputParticiple.toLowerCase() === currentVerb.participle.toLowerCase() &&
-    translationIsCorrect;
+  const indicator = (okPast && okPart && okTrans) ? "✅" : "❌";
 
-  const indicator = isCorrect ? "✅" : "❌";
+  // Формуємо клітинки з підсвіткою
+  const pastCell = okPast
+    ? pastInput
+    : `${pastInput} <span style="color:red">(Правильно: ${currentVerb.past})</span>`;
+  const partCell = okPart
+    ? partInput
+    : `${partInput} <span style="color:red">(Правильно: ${currentVerb.participle})</span>`;
+  const transCell = transInput === ""
+    ? `<span style="color:green">${currentVerb.translation}</span>`
+    : okTrans
+      ? transInput
+      : `${transInput} <span style="color:red">(Правильно: ${currentVerb.translation})</span>`;
 
-  // Формуємо вміст для Past Simple
-  const pastCellContent = (inputPast.toLowerCase() === currentVerb.past.toLowerCase())
-    ? inputPast
-    : `${inputPast} <span style="color: red;">(Правильна відповідь: ${currentVerb.past})</span>`;
-
-  // Формуємо вміст для Past Participle
-  const participleCellContent = (inputParticiple.toLowerCase() === currentVerb.participle.toLowerCase())
-    ? inputParticiple
-    : `${inputParticiple} <span style="color: red;">(Правильна відповідь: ${currentVerb.participle})</span>`;
-
-  // Формуємо вміст для Перекладу:
-  // Якщо поле порожнє — показуємо правильну відповідь зеленим шрифтом,
-  // інакше перевіряємо правильність введеного значення
-  const translationCellContent = (inputTranslation === "")
-    ? `<span style="color: green;">${currentVerb.translation}</span>`
-    : (inputTranslation.toLowerCase() === currentVerb.translation.toLowerCase())
-      ? inputTranslation
-      : `${inputTranslation} <span style="color: red;">(Правильна відповідь: ${currentVerb.translation})</span>`;
-
-  // Створюємо новий рядок з результатами, що включає Infinitive
-  const newRow = document.createElement("tr");
-  newRow.innerHTML = `
+  // Додаємо рядок результату
+  const row = document.createElement("tr");
+  row.innerHTML = `
     <td>${indicator}</td>
     <td>${currentVerb.base}</td>
-    <td>${pastCellContent}</td>
-    <td>${participleCellContent}</td>
-    <td>${translationCellContent}</td>
+    <td>${pastCell}</td>
+    <td>${partCell}</td>
+    <td>${transCell}</td>
   `;
-
-  const resultsBody = document.getElementById("resultsBody");
-  // Видаляємо поточний рядок вводу
+  const body = document.getElementById("resultsBody");
   const inputRow = document.getElementById("inputRow");
-  resultsBody.removeChild(inputRow);
-  // Додаємо новостворений рядок результату на початок таблиці
-  resultsBody.insertBefore(newRow, resultsBody.firstChild);
+  body.removeChild(inputRow);
+  body.insertBefore(row, body.firstChild);
 
-  // Створюємо новий рядок для введення відповіді
-  const newInputRow = document.createElement("tr");
-  newInputRow.id = "inputRow";
-  newInputRow.innerHTML = `
+  // Відновлюємо рядок вводу
+  const newRow = document.createElement("tr");
+  newRow.id = "inputRow";
+  newRow.innerHTML = `
     <td></td>
     <td id="inputInfinitive"></td>
     <td><input type="text" id="inputPast" placeholder="Past Simple" /></td>
     <td><input type="text" id="inputParticiple" placeholder="Past Participle" /></td>
     <td><input type="text" id="inputTranslation" placeholder="Переклад (не обов'язково)" /></td>
   `;
-  resultsBody.insertBefore(newInputRow, resultsBody.firstChild);
+  body.insertBefore(newRow, body.firstChild);
 
-  // Завантажуємо наступне запитання і встановлюємо фокус знову
   pickRandomVerb();
 }
 
-document.getElementById("resultsTable").addEventListener("keydown", function(event) {
-  if (event.key === "Enter" && event.target.closest("#inputRow")) {
-    event.preventDefault();
-    checkAnswer();
-  }
-});
+// Обробник Enter
+document
+  .getElementById("resultsTable")
+  .addEventListener("keydown", e => {
+    if (e.key === "Enter" && e.target.closest("#inputRow")) {
+      e.preventDefault();
+      checkAnswer();
+    }
+  });
 
-if (quizVerbs.length === 0) {
-  document.getElementById("quizContainer").innerHTML = `
-    <p style="color: red;">⚠️ Увага: список дієслів порожній!</p>
-    <p>Перейдіть на <a href="index.html" target="_self">головну сторінку</a> та додайте хоча б одне дієслово для початку тесту.</p>
-  `;
+// Ініціалізація
+if (!quizVerbs.length) {
+  document.body.innerHTML = `<p>Додайте дієслова у словник перед запуском тесту.</p>`;
 } else {
   pickRandomVerb();
 }
+
+// Вивід словника справа
+function renderDictionaryTable() {
+  const tbody = document.getElementById("dictionaryBody");
+  defaultVerbs.forEach(verb => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${verb.base}</td>
+      <td>${verb.past}</td>
+      <td>${verb.participle}</td>
+      <td>${verb.translation}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  renderDictionaryTable();
+});

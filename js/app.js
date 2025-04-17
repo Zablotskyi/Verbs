@@ -1,6 +1,6 @@
 const LOCAL_STORAGE_KEY = "irregularVerbs";
 
-// Завантаження з localStorage або дефолтні
+// Завантаження з localStorage або дефолтні значення
 let verbs = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || [
   { base: "be", past: "was/were", participle: "been", translation: "бути" },
   { base: "begin", past: "began", participle: "begun", translation: "починати" },
@@ -11,26 +11,31 @@ let verbs = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || [
 const tableBody = document.getElementById("verbsTableBody");
 const searchInput = document.getElementById("searchInput");
 
-// Зберігання у localStorage
+// Функція збереження масиву дієслів у localStorage
 function saveVerbs() {
   localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(verbs));
 }
 
-// Відображення таблиці
+// Функція рендерингу таблиці (з кнопками редагування)
 function renderVerbs(filteredVerbs) {
   tableBody.innerHTML = "";
-  filteredVerbs.forEach(verb => {
-    const row = `<tr>
-      <td>${verb.base}</td>
-      <td>${verb.past}</td>
-      <td>${verb.participle}</td>
-      <td>${verb.translation}</td>
-    </tr>`;
+  filteredVerbs.forEach((verb) => {
+    // Отримуємо індекс елемента в основному масиві (при наявності пошуку цей індекс потрібен для правильного редагування)
+    const origIndex = verbs.indexOf(verb);
+    const row = `
+      <tr>
+        <td>${verb.base}</td>
+        <td>${verb.past}</td>
+        <td>${verb.participle}</td>
+        <td>${verb.translation}</td>
+        <td><button onclick="editVerb(${origIndex})">Редагувати</button></td>
+      </tr>
+    `;
     tableBody.innerHTML += row;
   });
 }
 
-// Пошук
+// Обробка події пошуку
 searchInput.addEventListener("input", () => {
   const value = searchInput.value.toLowerCase();
   const filtered = verbs.filter(verb =>
@@ -42,7 +47,7 @@ searchInput.addEventListener("input", () => {
   renderVerbs(filtered);
 });
 
-// Додавання нового слова
+// Функція для додавання нового слова через форму
 document.getElementById("addVerbForm").addEventListener("submit", function (e) {
   e.preventDefault();
 
@@ -62,23 +67,30 @@ document.getElementById("addVerbForm").addEventListener("submit", function (e) {
   this.reset();
 });
 
-// Завантажити як JSON
-function downloadVerbs() {
-  const dataStr = JSON.stringify(verbs, null, 2);
-  const blob = new Blob([dataStr], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
+// Функція редагування дієслова.
+// Викликається при натисканні кнопки "Редагувати" у відповідному рядку.
+function editVerb(index) {
+  const verb = verbs[index];
+  const newBase = prompt("Редагуйте Infinitive:", verb.base);
+  if (newBase === null) return; // якщо відмінили, нічого не змінюємо
 
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "verbs.json";
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  const newPast = prompt("Редагуйте Past Simple:", verb.past);
+  if (newPast === null) return;
+
+  const newParticiple = prompt("Редагуйте Past Participle:", verb.participle);
+  if (newParticiple === null) return;
+
+  const newTranslation = prompt("Редагуйте Переклад:", verb.translation);
+  if (newTranslation === null) return;
+
+  // Оновлюємо об'єкт дієслова
+  verbs[index] = {
+    base: newBase.trim(),
+    past: newPast.trim(),
+    participle: newParticiple.trim(),
+    translation: newTranslation.trim()
+  };
+
+  saveVerbs();
+  renderVerbs(verbs);
 }
-
-// Первинне завантаження
-renderVerbs(verbs);
-
-// Глобально доступна функція для кнопки
-window.downloadVerbs = downloadVerbs;
