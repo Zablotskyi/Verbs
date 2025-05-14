@@ -18,58 +18,62 @@
 
 </head>
 <body>
-
-<!-- Ліва частина: тест -->
-<div id="quizContainer">
-  <h1>Тест на неправильні дієслова</h1>
-  <p id="question"></p>
-
-  <table id="resultsTable">
-    <thead>
-    <tr>
-      <th>Результат</th>
-      <th>Infinitive</th>
-      <th>Past Simple</th>
-      <th>Past Participle</th>
-      <th>Переклад</th>
-    </tr>
-    </thead>
-    <tbody id="resultsBody">
-    <tr id="inputRow">
-      <td></td>
-      <td id="inputInfinitive"></td>
-      <td><input type="text" id="inputPast" placeholder="Past Simple" /></td>
-      <td><input type="text" id="inputParticiple" placeholder="Past Participle" /></td>
-      <td><input type="text" id="inputTranslation" placeholder="Переклад (не обов'язково)" /></td>
-    </tr>
-    </tbody>
-  </table>
-
-  <button onclick="checkAnswer()">Перевірити</button>
-</div>
-
-<!-- Права частина: таблиця дієслів -->
-<div id="dictionaryContainer">
-  <div style="display: flex; justify-content: space-between; align-items: center;">
-    <h2 style="margin: 0;">Словник дієслів</h2>
-    <button id="toggleDictionaryBtn">Сховати</button>
+<main class="main-content">
+  <!-- Ліва частина: тест -->
+  <div id="quizContainer">
+    <h1>Тест на неправильні дієслова</h1>
+    <p id="question"></p>
+    <table id="resultsTable">
+      <thead>
+      <tr>
+        <th>Результат</th>
+        <th>Infinitive</th>
+        <th>Past Simple</th>
+        <th>Past Participle</th>
+        <th>Переклад</th>
+      </tr>
+      </thead>
+      <tbody id="resultsBody">
+      <tr id="inputRow">
+        <td></td>
+        <td id="inputInfinitive"></td>
+        <td><input type="text" id="inputPast" placeholder="Past Simple" /></td>
+        <td><input type="text" id="inputParticiple" placeholder="Past Participle" /></td>
+        <td><input type="text" id="inputTranslation" placeholder="Переклад (не обов'язково)" /></td>
+      </tr>
+      </tbody>
+    </table>
+    <button onclick="checkAnswer()">Перевірити</button>
   </div>
-  <table id="dictionaryTable">
-    <thead>
-    <tr>
-      <th>Infinitive</th>
-      <th>Past</th>
-      <th>Participle</th>
-      <th>Переклад</th>
-    </tr>
-    </thead>
-    <tbody id="dictionaryBody">
-    <!-- Слова будуть додані через JS -->
-    </tbody>
-  </table>
-</div>
 
+  <!-- Права частина: таблиця дієслів -->
+  <div id="dictionaryContainer">
+    <div class="dictionary-header">
+      <h2>Словник дієслів</h2>
+      <button id="toggleDictionaryBtn">Сховати</button>
+    </div>
+    <table id="dictionaryTable">
+      <thead>
+      <tr>
+        <th>Infinitive</th>
+        <th>Past</th>
+        <th>Participle</th>
+        <th>Переклад</th>
+      </tr>
+      </thead>
+      <tbody id="dictionaryBody">
+      <!-- Слова будуть додані через JS -->
+      </tbody>
+    </table>
+  </div>
+</main>
 
+<footer class="footer-counters">
+  <a href="https://www.hitwebcounter.com" target="_blank">
+    <img src="https://hitwebcounter.com/counter/counter.php?page=1234567&style=0006&nbdigits=5&type=ip&initCount=0"
+         title="Відвідування" alt="counter" />
+  </a>
+</footer>
 <script src="js/quiz.js"></script>
 </body>
 </html>

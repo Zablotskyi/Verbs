@@ -1,33 +1,43 @@
-body {
+html, body {
+  height: 100%;
   margin: 0;
-  padding: 20px;
+  padding: 0;
   font-family: Arial, sans-serif;
-  background-color: #fdfdfd;
   display: flex;
-  gap: 20px;
-  align-items: flex-start;
-  color: #333;
+  flex-direction: column;
 }
 
-/* Ліва частина – тест */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  padding: 20px;
+  align-items: flex-start;
+  background-color: #fdfdfd;
+}
+
 #quizContainer {
   flex: 2;
 }
 
-/* Права частина – словник */
 #dictionaryContainer {
   flex: 1;
   max-height: 90vh;
   overflow-y: auto;
 }
 
-/* Заголовки */
 h1, h2 {
   margin-top: 0;
   font-size: 20px;
 }
 
-/* Таблиця результатів */
+.dictionary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 #resultsTable,
 #dictionaryTable {
   width: 100%;
@@ -44,19 +54,15 @@ h1, h2 {
   text-align: center;
 }
 
-/* Таблиця словника – компактніша */
 #dictionaryTable {
   font-size: 12px;
 }
 
 #dictionaryTable th,
 #dictionaryTable td {
-  padding: 1px 1px;
-  font-size: 11px;
-  line-height: 1.1;
+  padding: 3px 4px;
 }
 
-/* Прилипання заголовків */
 #dictionaryTable th {
   background-color: #f0f0f0;
   position: sticky;
@@ -64,7 +70,6 @@ h1, h2 {
   z-index: 1;
 }
 
-/* Поля вводу */
 input[type="text"] {
   width: 100%;
   box-sizing: border-box;
@@ -72,7 +77,6 @@ input[type="text"] {
   font-size: 13px;
 }
 
-/* Кнопка */
 button {
   margin-top: 10px;
   padding: 6px 12px;
@@ -80,7 +84,22 @@ button {
   cursor: pointer;
 }
 
-/* Вивід результатів */
 span {
   font-size: 12px;
+}
+
+.footer-counters {
+  text-align: center;
+  padding: 15px 0;
+  background-color: #eee;
+  border-top: 1px solid #ccc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.footer-counters img {
+  height: 30px;
 }
