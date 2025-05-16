@@ -86,13 +86,12 @@ const defaultVerbs = [
 ];
 
 // Завантаження з localStorage або дефолтного списку
-const quizVerbs = JSON.parse(localStorage.getItem("irregularVerbs")) || defaultVerbs;
+const quizVerbs = defaultVerbs;
 
-// Перемішаний список і поточний індекс
 let shuffledVerbs = [];
-let currentIndex = 0;
+let lastVerb = null;
 
-// Перемішування масиву
+// Перемішування
 function shuffle(array) {
   return array
     .map(item => ({ item, sort: Math.random() }))
@@ -102,13 +101,20 @@ function shuffle(array) {
 
 // Показ наступного дієслова
 function pickNextVerb() {
-  // Якщо всі слова пройдено — перемішати знову
-  if (currentIndex >= shuffledVerbs.length) {
-    shuffledVerbs = shuffle(defaultVerbs);
-    currentIndex = Math.floor(Math.random() * shuffledVerbs.length);
+  // Якщо всі слова вичерпано — перемішати з уникненням дублю
+  if (shuffledVerbs.length === 0) {
+    let newSet = shuffle([...quizVerbs]);
+
+    // Уникаємо, щоб перше слово = останньому
+    while (lastVerb && newSet.length > 1 && newSet[0].base === lastVerb.base) {
+      newSet = shuffle([...quizVerbs]);
+    }
+
+    shuffledVerbs = newSet;
   }
 
-  const currentVerb = shuffledVerbs[currentIndex];
+  const currentVerb = shuffledVerbs.shift();
+  lastVerb = currentVerb;
 
   document.getElementById("question").textContent = `Введіть форми для дієслова: ${currentVerb.base}`;
   document.getElementById("inputInfinitive").textContent = currentVerb.base;
@@ -134,6 +140,16 @@ function checkAnswer() {
 
   const isAllCorrect = isPastCorrect && isParticipleCorrect && isTranslationCorrect;
   const indicator = isAllCorrect ? "✅" : "❌";
+
+  // 🎧 Звукове повідомлення
+  const correctSound = document.getElementById("soundCorrect");
+  const wrongSound = document.getElementById("soundWrong");
+
+  if (isAllCorrect) {
+    correctSound.play();
+  } else {
+    wrongSound.play();
+  }
 
   const pastCell = isPastCorrect
     ? inputPast
@@ -163,7 +179,7 @@ function checkAnswer() {
   body.removeChild(inputRow);
   body.insertBefore(row, body.firstChild);
 
-  // Створюємо новий інпут рядок
+  // Новий ввід
   const newInputRow = document.createElement("tr");
   newInputRow.id = "inputRow";
   newInputRow.innerHTML = `
@@ -175,11 +191,10 @@ function checkAnswer() {
   `;
   body.insertBefore(newInputRow, body.firstChild);
 
-  currentIndex++;
   pickNextVerb();
 }
 
-// Обробка клавіші Enter
+// Enter → перевірка
 document.getElementById("resultsTable").addEventListener("keydown", function (event) {
   if (event.key === "Enter" && event.target.closest("#inputRow")) {
     event.preventDefault();
@@ -187,19 +202,16 @@ document.getElementById("resultsTable").addEventListener("keydown", function (ev
   }
 });
 
-// Старт при завантаженні
+// DOM ready
 document.addEventListener("DOMContentLoaded", () => {
   shuffledVerbs = shuffle(quizVerbs);
-  currentIndex = 0;
+  lastVerb = null;
   pickNextVerb();
-
-  // 👇 Повертаємо таблицю словника
   renderDictionaryTable();
   setupToggleDictionary();
 });
 
-
-// Таблиця словника (праворуч)
+// Таблиця словника
 function renderDictionaryTable() {
   const tbody = document.getElementById("dictionaryBody");
   tbody.innerHTML = "";
@@ -215,7 +227,7 @@ function renderDictionaryTable() {
   });
 }
 
-// Кнопка "Сховати / Показати" словник
+// Кнопка сховати/показати
 function setupToggleDictionary() {
   const btn = document.getElementById("toggleDictionaryBtn");
   const table = document.getElementById("dictionaryTable");
