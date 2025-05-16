@@ -191,7 +191,10 @@ function checkAnswer() {
   `;
   body.insertBefore(newInputRow, body.firstChild);
 
-  pickNextVerb();
+  // ✅ Переходимо далі тільки якщо відповідь правильна
+  if (isAllCorrect) {
+    pickNextVerb(); // тільки якщо все правильно
+  }
 }
 
 // Enter → перевірка
